@@ -6,28 +6,36 @@ const fs = require('fs');
 let app = express();
 app.use(cors());
 
-const storage = multer.diskStorage ({
-  destination: function(req, file, cb) {
-    console.log(this.campanha)
-    if(!fs.existsSync(`../images/`)) {
-      fs.mkdirSync(`../images/`)
-      cb(null, `../images/`)
-    } else {
-      cb(null, `../images/`)
-    }
-  },
-  filename: function(req, file, cb) {
-    cb(null, file.originalname)
-  }
-})
+const campanha = ''
 
-const upload = multer({storage})
+function storage(campanha){
+  console.log(campanha)
+  const storage = multer.diskStorage ({
+    destination: function(req, file, cb) {
+      if(!fs.existsSync(`../${campanha} /`)) {
+        fs.mkdirSync(`../${campanha} /`)
+        cb(null, `../${campanha} /`)
+      } else {
+        cb(null, `../${campanha} /`)
+      }
+    },
+    filename: function(req, file, cb) {
+      cb(null, file.originalname)
+    }
+  })
+  
+  const upload = multer({storage})
+
+  return upload.array('file')
+}
 
 app.get('/', async (req, res) => {
   res.send({ running: true })
 });
 
-app.post('/upload', upload.array('file'), async (req, res) => {
+app.post('/upload', storage(1), async (req, res) => {
+  console.log(req.body.campanha)
+  this.campanha = req.body.campanha
   res.send({ upload: true });
 });
 
